@@ -11,4 +11,6 @@ import java.util.List;
 public interface IReservation extends JpaRepository<Reservation, Integer> {
     @Query("SELECT r FROM Reservation r WHERE r.terrain = :terrain AND r.date_res = :date")
     List<Reservation> findByTerrainAndDate(@Param("terrain") Terrain terrain, @Param("date") String date);
+    List<Reservation> findByTerrainId(int terrainId);
+
 }

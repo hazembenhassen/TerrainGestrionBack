@@ -68,6 +68,43 @@ public class AuthCTR {
     @GetMapping("/Adherant")
     public List<Adherant> f3() { return adhDAO.findAll();}
 
+    @DeleteMapping("/terrain/{id}")
+    public ResponseEntity<String> deleteTerrain(@PathVariable int id) {
+        // Check if the terrain exists
+        if (!terrainDAO.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Terrain not found.");
+        }
+
+        // Find and delete all related Reservations
+        List<Reservation> linkedReservations = resDAO.findByTerrainId(id);
+        if (linkedReservations != null && !linkedReservations.isEmpty()) {
+            resDAO.deleteAll(linkedReservations);
+        }
+
+        // Delete the Terrain
+        terrainDAO.deleteById(id);
+        return ResponseEntity.ok("Terrain deleted successfully, along with related reservations.");
+    }
+
+
+    @DeleteMapping("/reservation/{id}")
+    public ResponseEntity<String> deleteReservation(@PathVariable int id) {
+        if (resDAO.existsById(id)) {
+            resDAO.deleteById(id);
+            return ResponseEntity.ok("Reservation deleted successfully.");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reservation not found.");
+    }
+
+    @DeleteMapping("/adherant/{id}")
+    public ResponseEntity<String> deleteAdherant(@PathVariable int id) {
+        if (adhDAO.existsById(id)) {
+            adhDAO.deleteById(id);
+            return ResponseEntity.ok("Adherant deleted successfully.");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Adherant not found.");
+    }
+
     @PostMapping("/addReservation")
     public ResponseEntity<String> addReservation(@RequestBody Reservation reservation) {
         // Vérifiez si le terrain existe
