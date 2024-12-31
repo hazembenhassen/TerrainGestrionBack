@@ -37,21 +37,35 @@ public class AuthCTR {
 
     @PostMapping("/login")
     public ResponseEntity<Administrateur> loginAdmin(@RequestBody Administrateur adminData) {
-        // Find the admin by username
         Administrateur admin = adminDAO.findByUsername((adminData.getUsername()));
-
         if (admin == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Admin not found
         }
-
-        // Check if the password matches
         if (admin.getPassword().equals(adminData.getPassword())) {
             return ResponseEntity.ok(admin); // Authentication successful
         }
-
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Invalid password
     }
 
+    @PostMapping("/addTerrain")
+    public ResponseEntity<Terrain> addTerrain(@RequestBody Terrain terrain) {
+        try {
+            Terrain savedTerrain = terrainDAO.save(terrain);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedTerrain);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/addAdherant")
+    public ResponseEntity<Adherant> addAdherant(@RequestBody Adherant adherant) {
+        try {
+            Adherant savedAdherant = adhDAO.save(adherant);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedAdherant);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
 
     @GetMapping("/terrain")
